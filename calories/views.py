@@ -82,7 +82,7 @@ def LogOutPage(request):
     return redirect("login")
 
 # for selecting food each day
-@login_required
+@login_required(login_url="login")
 def select_food(request):
     person = Profile.objects.filter(person_of=request.user).last()
     # for showing all food items available
@@ -97,10 +97,11 @@ def select_food(request):
     else:
         form = SelectFoodForm(request.user)
 
-    conext = {"form": form, "food_items": food_items}
+    context = {"form": form, "food_items": food_items}
     return render(request, "select_food.html", context)
 
 # for adding new food
+@login_required(login_url="login")
 def add_food(request):
     # for showing all food items available
     food_items = Food.objects.filter(person_of=request.user)
@@ -122,7 +123,7 @@ def add_food(request):
     return render(request, "add_food.html", context)
 
 # for updating food given by the user
-@login_required
+@login_required(login_url="login")
 def update_food(request, pk):
     food_items = Food.objects.filter(person_of=request.user)
 
@@ -139,7 +140,7 @@ def update_food(request, pk):
     return render(request, "add_food.html", context)
 
 # for deleting food given by the user
-@login_required
+@login_required(login_url="login")
 def delete_food(request, pk):
     food_item = Food.objects.get(id=pk)
     if request.method == "POST":
@@ -149,7 +150,7 @@ def delete_food(request, pk):
     return render(request, "delete_food.html", context)
 
 # profile page of user
-@login_required
+@login_required(login_url="login")
 def ProfilePage(request):
     # getting the latest profile object for the user
     person = Profile.objects.filter(person_of=request.user).last()
@@ -170,4 +171,4 @@ def ProfilePage(request):
                                      date__lt=timezone.now().date(),
                                      person_of=request.user)
     context = {"form": form, "food_items": food_items, "records": records}
-    return reqnder(request, "profile.html", context)
+    return render(request, "profile.html", context)
